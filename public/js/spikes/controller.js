@@ -1,7 +1,14 @@
 var buffers = [];
+
 $(document).ready(function(){
 
 
+  function play(track_num, start_time){
+    source = context.createBufferSource();
+    source.buffer = buffers[track_num];
+    source.connect(context.destination);
+    source.start(start_time);
+  }
 
   $('#file_player').submit(function(e){
     e.preventDefault();
@@ -16,26 +23,18 @@ $(document).ready(function(){
     bufferLoader = new BufferLoader(context, urls, finishedLoading);
     bufferLoader.load();
 
-    function play(track_num, start_time){
-      source = context.createBufferSource();
-      // debugger;
-      source.buffer = buffers[track_num];
-      source.connect(context.destination);
-      source.start(start_time);
-    }
-
     function finishedLoading(bufferList) {
       for (i in bufferList) {
         buffers.push(bufferList[i]);
       }
-      play(0,1);
-      play(0,5);
+      alert('audio loaded!');
     }
+  });
 
-
-    // debugger;
-
-
+  $('#play').click(function{
+    for (i in buffers) {
+      play(i, 0);
+    }
   });
 
 });
