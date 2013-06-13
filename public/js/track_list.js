@@ -2,6 +2,10 @@ function TrackList(savedList){
 
   this.tracks = [];
 
+  this.getLongestDuration = function(){
+    return 20;
+  }
+
   this.addTrack = function(url, startTime, offset, playTime){
     this.tracks.push(new Track(url,startTime, offset, playTime));
   };

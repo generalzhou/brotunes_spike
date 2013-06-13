@@ -1,11 +1,13 @@
 var context = new webkitAudioContext();
 
-function Track(url, startTime, offset, playTime) {
+function Track(url, el, longestDuration, startTime, offset, playTime) {
   this.buffer;
   this.url = url;
   this.startTime = startTime;
   this.offset = offset;
   this.playTime = null;
+  this.duration;
+  this.el = el;
 
   this.setUpBuffer = function(){
     source = context.createBufferSource();
@@ -34,9 +36,18 @@ function Track(url, startTime, offset, playTime) {
       context.decodeAudioData(request.response, function(buffer){
         console.log("Back with the song");
         thisTrack.buffer = buffer;
+        thisTrack.duration = buffer.duration;
+
+        longestDuration = Math.max(longestDuration, thisTrack.duration)
+        ratio = thisTrack.duration / longestDuration;
+        pxWidth = ratio * 700;
+        debugger;
+        thisTrack.el.children().css('width', pxWidth);
+        thisTrack.el.show();
       });
-    }
+    };
     request.send();
   };
+
   this.loadSound();
 }
