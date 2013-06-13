@@ -18,26 +18,34 @@ TrackUi.prototype = {
 }
 
 $(document).ready(function() {
+  var selectStart;
+  var selectEnd;
+  var track;
 
   $('#add_track').click( function() {
     var count = $('#track_list li').size();
     var name = "track_" + count;
-    var track = new TrackUi(name, 250);
+    track = new TrackUi(name, 250);
     $('#track_list').append('<li class="track_line"><div class="track"></div></li>');
 
     $('#track_list').on("mousedown", ".track", function(e){
       var parentOffset = $(this).offset();
-      var selectStart = e.pageX - parentOffset.left;
+      selectStart = e.pageX - parentOffset.left;
       $(this).mouseup(function(e2){
         var parentOffset = $(this).offset();
-        var selectEnd = e2.pageX - parentOffset.left;
-        var selection = selectEnd - selectStart;
-        track.update(selectStart, selection);
-        $(this).css("width", track.length + "px");
-        $(this).css("left", track.start + "px");
+        selectEnd = e2.pageX - parentOffset.left;
       });
     });
   });
+
+  $(document).on("keyup", function(event){
+    if ( event.which == 67 ) {
+      var selection = selectEnd - selectStart;
+      track.update(selectStart, selection);
+      $('#track_list').find('.track').css("width", track.length + "px");
+      $('#track_list').find('.track').css("left", track.start + "px");
+    }
+  });  
 });
 
 
