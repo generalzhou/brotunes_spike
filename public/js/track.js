@@ -1,18 +1,15 @@
 var context = new webkitAudioContext();
 
-function Track(url) {
+function Track(url, startTime, offset, playTime) {
   this.buffer;
   this.url = url;
-  this.startTime = 0;
-  this.trackOffset = 0;
+  this.startTime = startTime;
+  this.offset = offset;
   this.playTime = null;
-  this.loop = false;
 
   this.setUpBuffer = function(){
     source = context.createBufferSource();
     source.buffer = this.buffer;
-    source.loopStart = this.trackOffset;
-    source.loop = this.loop;
     return source;
   };
 
@@ -23,7 +20,7 @@ function Track(url) {
   this.play = function(){
     source = this.setUpBuffer();
     this.connectNodes(source);
-    source.noteGrainOn(this.startTime,this.trackOffset,this.playTime);
+    source.noteGrainOn(this.startTime,this.offset,this.playTime);
   };
 
   this.loadSound = function() {
