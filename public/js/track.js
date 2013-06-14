@@ -1,13 +1,28 @@
+function pixelize(seconds){
+  return seconds / playlist.longestDuration * 700;
+}
+
+function secondize(pixels){
+  return pixels / 700 * playlist.longestDuration;
+}
+
 var context = new webkitAudioContext();
 
-function Track(url, el, longestDuration, startTime, offset, playTime) {
+function Track(url, elem, startTime, offset, playTime) {
   this.buffer;
   this.url = url;
-  this.startTime = startTime;
-  this.offset = offset;
-  this.playTime = null;
+  this.startTime = typeof(startTime) !== 'undefined' ? startTime : 0;
+  this.offset = typeof(offset) !== 'undefined' ? offset : 0;
+  this.playTime;
   this.duration;
-  this.el = el;
+  this.elem = elem;
+
+
+  this.render = function(){
+    this.elem.children('.track').css("width", pixelize(this.playTime) + "px");
+    this.elem.children('.track').css("left", pixelize(startTime) + "px");
+    this.elem.children('.track').css("visibility",'');
+  };
 
   this.setUpBuffer = function(){
     source = context.createBufferSource();
@@ -37,13 +52,8 @@ function Track(url, el, longestDuration, startTime, offset, playTime) {
         console.log("Back with the song");
         thisTrack.buffer = buffer;
         thisTrack.duration = buffer.duration;
-
-        longestDuration = Math.max(longestDuration, thisTrack.duration)
-        ratio = thisTrack.duration / longestDuration;
-        pxWidth = ratio * 700;
-        debugger;
-        thisTrack.el.children().css('width', pxWidth);
-        thisTrack.el.show();
+        thisTrack.playTime = buffer.duration;
+        thisTrack.render();
       });
     };
     request.send();
