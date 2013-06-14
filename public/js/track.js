@@ -1,67 +1,53 @@
-function pixelize(seconds){
-  return seconds / playlist.longestDuration * 700;
-}
-
-function secondize(pixels){
-  return pixels / 700 * playlist.longestDuration;
-}
-
-var context = new webkitAudioContext();
-
-function Track(url, elem, startTime, offset, playTime) {
+function Track(options) {
+  var defaults = {delay:0, offset:0};
+  options = _.extend(defaults, options);
+  this.url = options.url;
+  this.context = options.context;
+  this.speakers = this.context.destination;
+  this.delay = options.delay;
+  this.offset = options.offset;
+  this.duration = options.duration;
+  this.trackLength;
   this.buffer;
-  this.url = url;
-  this.startTime = typeof(startTime) !== 'undefined' ? startTime : 0;
-  this.offset = typeof(offset) !== 'undefined' ? offset : 0;
-  this.playTime;
-  this.duration;
-  this.elem = elem;
-
-
-  this.render = function(){
-    this.elem.children('.track').css("width", pixelize(this.playTime) + "px");
-    this.elem.children('.track').css("left", pixelize(this.startTime) + "px");
-    this.elem.children('.track').css("visibility",'');
-  };
+  var thisTrack = this;
 
   this.setUpBuffer = function(){
-    source = context.createBufferSource();
+    var source = this.context.createBufferSource();
     source.buffer = this.buffer;
     return source;
   };
 
   this.connectNodes = function(source){
-    source.connect(context.destination);
+    source.connect(this.speakers);
   };
 
   this.play = function(){
     source = this.setUpBuffer();
     this.connectNodes(source);
-    source.noteGrainOn(this.startTime,this.offset,this.playTime);
+    source.start(this.context.currentTime + this.delay,this.offset,this.duration);
   };
 
-  this.loadSound = function() {
-    var thisTrack = this;
-
-    var request = new XMLHttpRequest();
-    request.open('GET', this.url, true);
-    request.responseType = 'arraybuffer';
-
-    request.onload = function(){
-      context.decodeAudioData(request.response, function(buffer){
-        console.log("Back with the song");
-        thisTrack.buffer = buffer;
-        thisTrack.duration = buffer.duration;
-        thisTrack.playTime = buffer.duration;
-        thisTrack.render();
-      });
-    };
-    request.send();
+  this.bufferLoaded = function(buffer) {
+    thisTrack.buffer = buffer;
+    thisTrack.trackLength = buffer.duration;
+    thisTrack.duration = buffer.duration;
+    $.Topic("Track:bufferLoaded").publish(this);
   };
 
-  this.update = function(startTime) {
-    this.startTime = startTime;
-  }
+  this.setDelay = function(delay) {
+    this.delay = delay;
+    $.Topic("Track:updatedDelay").publish(this);
+  };
 
-  this.loadSound();
+  this.setOffset = function(offset) {
+    this.offset = offset;
+    $.Topic("Track:updatedOffset").publish(this);
+  };
+
+  this.setDuration = function(duration) {
+    this.duration = duration;
+    $.Topic("Track:updatedDuration").publish(this);
+  };
+
+  BufferLoader.load(this.context, this.url, this.bufferLoaded);
 }
