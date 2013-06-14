@@ -1,7 +1,7 @@
 function TrackList(savedList){
 
   this.tracks = [];
-  this.longestDuration = 20;
+  this.longestDuration = 10;
 
   this.addTrack = function(url, elem, startTime, offset, playTime){
     this.tracks.push(new Track(url,elem, startTime, offset, playTime));

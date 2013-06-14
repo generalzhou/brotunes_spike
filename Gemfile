@@ -16,6 +16,9 @@ gem 'activerecord'
 gem 'rake'
 
 gem 'shotgun'
+gem 'haml'
+gem 'sass'
+gem 'coffee-script'
 
 group :test do
   gem 'faker'
