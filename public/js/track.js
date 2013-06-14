@@ -20,7 +20,7 @@ function Track(url, elem, startTime, offset, playTime) {
 
   this.render = function(){
     this.elem.children('.track').css("width", pixelize(this.playTime) + "px");
-    this.elem.children('.track').css("left", pixelize(startTime) + "px");
+    this.elem.children('.track').css("left", pixelize(this.startTime) + "px");
     this.elem.children('.track').css("visibility",'');
   };
 
@@ -58,6 +58,10 @@ function Track(url, elem, startTime, offset, playTime) {
     };
     request.send();
   };
+
+  this.update = function(startTime) {
+    this.startTime = startTime;
+  }
 
   this.loadSound();
 }
