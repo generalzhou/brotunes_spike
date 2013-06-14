@@ -1,6 +1,7 @@
 $(document).ready(function() {
 
   playlist = new TrackList();
+  function playAll() { playlist.playAll(); }
 
   var CKEY = 67;
   var SKEY = 83;
@@ -9,6 +10,7 @@ $(document).ready(function() {
   var selectedTrack;
 
   $('#add_track').click( addTrack );
+  $('#play_all').on('click', playAll);
 
   function addTrack() {
     var track_index = playlist.tracks.length;
