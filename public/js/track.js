@@ -10,13 +10,12 @@ var context = new webkitAudioContext();
 
 function Track(url, elem, startTime, offset, playTime) {
   this.buffer;
+  this.elem = elem;
   this.url = url;
-  this.startTime = typeof(startTime) !== 'undefined' ? startTime : 0;
-  this.offset = typeof(offset) !== 'undefined' ? offset : 0;
+  this.startTime = typeof(startTime) === 'undefined' ? 0 : startTime;
+  this.offset = typeof(offset) === 'undefined' ?  0 : offset;
   this.playTime;
   this.duration;
-  this.elem = elem;
-
 
   this.render = function(){
     this.elem.children('.track').css("width", pixelize(this.playTime) + "px");
@@ -25,7 +24,7 @@ function Track(url, elem, startTime, offset, playTime) {
   };
 
   this.setUpBuffer = function(){
-    source = context.createBufferSource();
+    var source = context.createBufferSource();
     source.buffer = this.buffer;
     return source;
   };
@@ -35,9 +34,15 @@ function Track(url, elem, startTime, offset, playTime) {
   };
 
   this.play = function(){
+
     source = this.setUpBuffer();
     this.connectNodes(source);
-    source.noteGrainOn(this.startTime,this.offset,this.playTime);
+    thisTrack = this;
+    setTimeout(function(){
+      source.start(0,thisTrack.offset,thisTrack.playTime);
+      //source.start does not reliably start after the delay (argument 1)
+      //hence we must take matters into our own hands
+    }, this.startTime * 1000);
   };
 
   this.loadSound = function() {
@@ -61,7 +66,7 @@ function Track(url, elem, startTime, offset, playTime) {
 
   this.update = function(startTime) {
     this.startTime = startTime;
-  }
+  };
 
   this.loadSound();
 }
