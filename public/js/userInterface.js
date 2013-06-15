@@ -1,14 +1,13 @@
+var playlist = new TrackList();
+
+function pixelize(seconds){
+  return seconds / playlist.longestDuration * 700;
+}
+
+function secondize(pixels){
+  return pixels / 700 * playlist.longestDuration;
+}
 $(document).ready(function() {
-
-  playlist = new TrackList();
-
-  function pixelize(seconds){
-    return seconds / playlist.longestDuration * 700;
-  }
-
-  function secondize(pixels){
-    return pixels / 700 * playlist.longestDuration;
-  }
 
   function UserInterface() {
     var CKEY = 67;
@@ -18,40 +17,11 @@ $(document).ready(function() {
     var context = new webkitAudioContext();
     var selectedTrack;
 
-  // Review why this function needs to exist. Out of place here
-    function playAll() { playlist.playAll(); }
-    $('#add_track').click( addTrack );
-    $('#play_all').click( playAll );
-
-    function addTrack() {
-      var url = "top_gun.mp3";
-      var track = new Track({url:url, context:context});
-      var trackIndex = playlist.tracks.length;
-      // Pull these out into <script type="text/template"> elements on the HTML page, render using
-      // underscore.js' templating library
-      var trackElement = $('<li class="track_line" id="track_'+trackIndex+'", data-trackindex="'+trackIndex+'"><div class="track"></div></li>');
-      // trackElement.hide();
-      playlist.addTrack(track);
-      $('#track_list').append(trackElement);
-      trackElement.find('.track').draggable({ axis: "x" });
-    }
-
-    $('#track_list').on('mouseup', '.track', updateDelay);
-
-    function setSelectedTrack(e) {
-      var index = $(e.target.parentElement).data('trackindex');
-      selectedTrack = playlist.tracks[index];
-    }
-
-    function updateDelay(e) {
-      setSelectedTrack(e);
-      var left = parseInt($(this).css("left"), 10);
-      var delay = secondize(left);
-      selectedTrack.setDelay(delay);
-    }
-
     $(document).on("keyup", keyUpEvent);
     $(document).on("keydown", keyDownEvent);
+    $('#track_list').on('mouseup', '.track', updateDelay);
+    $('#add_track').click( addTrack );
+    $('#play_all').click( playAll );
 
     function keyDownEvent(e) {
       switch (e.which) {
@@ -68,7 +38,31 @@ $(document).ready(function() {
         break;
       }
     }
-   
+
+    function addTrack() {
+      var url = 'james_bond.wav';
+      var track = new Track({url:url, context:context});
+      var trackView = new TrackView(track);
+      playlist.addTrack(track);
+    }
+
+    function playAll() {
+      playlist.playAllAt(0);
+    }
+
+    function setSelectedTrack(e) {
+      var index = $(e.target.parentElement).data('index');
+      selectedTrack = playlist.tracks[index];
+    }
+
+    function updateDelay(e) {
+      setSelectedTrack(e);
+      var left = parseInt($(this).css("left"), 10);
+      var delay = secondize(left);
+      selectedTrack.setDelay(delay);
+    }
+
+
     function createSoundSelection() {
       $('.track').draggable('disable');
       $('#track_list').on("mousedown", ".track", startSoundSelection);
@@ -94,8 +88,11 @@ $(document).ready(function() {
     }
 
     function cropSelection() {
-      selectedTrack.setOffset(secondize(Math.min(selectStart, selectEnd)));
-      selectedTrack.setDelay(secondize(Math.min(selectStart, selectEnd)));
+      console.log('current offset = ' + selectedTrack.offset + ' , current delay = ' + selectedTrack.delay)
+      selectedTrack.setOffset(selectedTrack.offset + secondize(Math.min(selectStart, selectEnd)));
+      selectedTrack.setDelay(selectedTrack.delay + secondize(Math.min(selectStart, selectEnd)));
+      console.log('new offset = ' + selectedTrack.offset + ' , new delay = ' + selectedTrack.delay)
+
       selectedTrack.setDuration(secondize(Math.abs(selectEnd - selectStart)));
     }
   }

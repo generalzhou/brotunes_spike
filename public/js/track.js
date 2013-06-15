@@ -34,7 +34,7 @@ function Track(options) {
   };
 
   this.playAt = function(startingTime){
-    console.log('startingTime = ' + startingTime)
+    console.log('startingTime = ' + startingTime + 'delay = ' + this.delay);
     var delay  = this.delay - startingTime;
     var offset = this.offset;
     var duration = this.duration;
@@ -64,7 +64,7 @@ function Track(options) {
     if (typeof(thisTrack.duration) === 'undefined') {
       thisTrack.duration = buffer.duration;
     }
-    $.Topic("Track:bufferLoaded").publish(this);
+    $.Topic("Track:bufferLoaded").publish(thisTrack);
   };
 
   this.setDelay = function(delay) {
