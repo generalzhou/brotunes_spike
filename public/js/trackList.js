@@ -25,6 +25,25 @@ function TrackList(context, savedJSON){
     }
   };
 
+  this.playAllAt = function(time){
+    for (i in this.tracks) {
+      this.tracks[i].playAt(time);
+    }
+  };
+
+  this.pauseAll = function(){
+    for (i in this.tracks) {
+      this.tracks[i].pause(time);
+    }
+  };
+
+  this.resumeAll = function(){
+    for (i in this.tracks) {
+      this.tracks[i].resume(time);
+    }
+  };
+
+
   if(typeof(savedJSON) !== 'undefined' ) {
     this.load(savedJSON);
   };
