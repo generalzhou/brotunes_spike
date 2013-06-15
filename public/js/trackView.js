@@ -13,6 +13,7 @@ function TrackView(track) {
       var elem = thisView.template( thisView );
       $('ul').append(elem);
       $('.audio_clip').draggable({ axis: "x" });
+
     }
   };
 

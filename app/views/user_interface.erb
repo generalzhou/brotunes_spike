@@ -10,6 +10,9 @@
   <li class="track_row" id="track_{{= rc.index }}" data-index='{{= rc.index}}'>
     <div class="track_controls">
       {{=rc.track.url}}
+      <br>
+      <a class='play_track' href='#'>play</a>
+      <a class='pause_track' href='#'>pause</a>
     </div>
     <div class="track_line">
       <div class="audio_clip" style="width:{{=pixelize(rc.track.duration)}}px;left:{{=pixelize(rc.track.delay)}}px">

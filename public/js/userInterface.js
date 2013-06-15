@@ -21,8 +21,23 @@ $(document).ready(function() {
     $(document).on("keyup", keyUpEvent);
     $(document).on("keydown", keyDownEvent);
     $('#track_list').on('mouseup', '.audio_clip', updateDelay);
+    $('#track_list').click(clickRouter)
     $('#add_track').click( addTrack );
     $('#play_all').click( playAll );
+
+    function clickRouter(e){
+      switch ($(e.target).attr('class')){
+        case ('play_track'):
+          playTrack($(e.target));
+          break;
+        case ('pause_track'):
+          pauseTrack($(e.target));
+          break;
+        case ('resume_track'):
+          resumeTrack($(e.target));
+          break;
+      }
+    }
 
     function keyDownEvent(e) {
       switch (e.which) {
@@ -49,6 +64,27 @@ $(document).ready(function() {
 
     function playAll() {
       playlist.playAllAt(0);
+    }
+
+    function playTrack(target) {
+      var id = target.parent().parent().data('index');
+      playlist.tracks[id].playAt(0);
+    }
+
+    function pauseTrack(target) {
+      target.html('resume');
+      target.removeClass();
+      target.addClass('resume_track');
+      var id = target.parent().parent().data('index');
+      playlist.tracks[id].pause();
+    }
+
+    function resumeTrack(target) {
+      target.html('pause');
+      target.removeClass();
+      target.addClass('pause_track');
+      var id = target.parent().parent().data('index');
+      playlist.tracks[id].resume();
     }
 
     function setSelectedTrack(e) {
