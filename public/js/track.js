@@ -9,7 +9,12 @@ function Track(options) {
   this.duration = options.duration;
   this.trackLength;
   this.buffer;
+
   var thisTrack = this;
+
+  this.toJSON = function(){
+    return {url:this.url, delay:this.delay, offset:this.offset, duration:this.duration};
+  }
 
   this.setUpBuffer = function(){
     var source = this.context.createBufferSource();
@@ -30,23 +35,25 @@ function Track(options) {
   this.bufferLoaded = function(buffer) {
     thisTrack.buffer = buffer;
     thisTrack.trackLength = buffer.duration;
-    thisTrack.duration = buffer.duration;
+    if (typeof(thisTrack.duration) === 'undefined') {
+      thisTrack.duration = buffer.duration;
+    }
     $.Topic("Track:bufferLoaded").publish(this);
   };
 
   this.setDelay = function(delay) {
     this.delay = delay;
-    $.Topic("Track:updatedDelay").publish(this);
+    $.Topic("Track:setDelay").publish(this);
   };
 
   this.setOffset = function(offset) {
     this.offset = offset;
-    $.Topic("Track:updatedOffset").publish(this);
+    $.Topic("Track:setOffset").publish(this);
   };
 
   this.setDuration = function(duration) {
     this.duration = duration;
-    $.Topic("Track:updatedDuration").publish(this);
+    $.Topic("Track:setDuration").publish(this);
   };
 
   BufferLoader.load(this.context, this.url, this.bufferLoaded);
