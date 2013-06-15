@@ -9,7 +9,7 @@ function TrackList(context, savedJSON){
   };
 
   this.toJSONString = function(){
-    var state = {longestDuration:this.longestDuration,tracks:[]};
+    var state = {tracks:[]};
     for (i in this.tracks){
       state['tracks'].push(this.tracks[i].toJSON());
     }

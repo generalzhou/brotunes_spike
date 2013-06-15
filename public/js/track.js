@@ -55,6 +55,11 @@ function Track(options) {
     this.source.stop(0);
   };
 
+  this.stop = function() {
+    this.pauseTime = this.startTime;
+    this.source.stop(0);
+  };
+
   this.resume = function(){
     this.playAt(Math.max((this.pauseTime - this.startTime),0));
   };

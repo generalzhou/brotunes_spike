@@ -27,14 +27,14 @@ $(document).ready(function() {
 
     function clickRouter(e){
       switch ($(e.target).attr('class')){
-        case ('play_track'):
-          playTrack($(e.target));
-          break;
         case ('pause_track'):
           pauseTrack($(e.target));
           break;
         case ('resume_track'):
           resumeTrack($(e.target));
+          break;
+        case ('stop_track'):
+          stopTrack($(e.target));
           break;
       }
     }
@@ -66,13 +66,8 @@ $(document).ready(function() {
       playlist.playAllAt(0);
     }
 
-    function playTrack(target) {
-      var id = target.parent().parent().data('index');
-      playlist.tracks[id].playAt(0);
-    }
-
     function pauseTrack(target) {
-      target.html('resume');
+      target.html('>');
       target.removeClass();
       target.addClass('resume_track');
       var id = target.parent().parent().data('index');
@@ -80,11 +75,20 @@ $(document).ready(function() {
     }
 
     function resumeTrack(target) {
-      target.html('pause');
+      target.html('||');
       target.removeClass();
       target.addClass('pause_track');
       var id = target.parent().parent().data('index');
       playlist.tracks[id].resume();
+    }
+
+    function stopTrack(target) {
+      var playPauseButton = target.parent().children('.pause_track')
+      playPauseButton.html('>');
+      playPauseButton.removeClass();
+      playPauseButton.addClass('resume_track');
+      var id = target.parent().parent().data('index');
+      playlist.tracks[id].stop();
     }
 
     function setSelectedTrack(e) {
