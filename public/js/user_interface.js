@@ -15,67 +15,56 @@ $(document).ready(function() {
     var SKEY = 83;
     var selectStart;
     var selectEnd;
-  // You're using this as the index at all times, but it's not named that way
-  // Regardless, just save the track here, not the index.
+    var context = new webkitAudioContext();
     var selectedTrack;
-
-    function init() {
-      var context = new webkitAudioContext();
-    }
 
   // Review why this function needs to exist. Out of place here
     function playAll() { playlist.playAll(); }
     $('#add_track').click( addTrack );
-    $('#play_all').click( playAll);
+    $('#play_all').click( playAll );
 
     function addTrack() {
+      var url = "top_gun.mp3";
+      var track = new Track({url:url, context:context});
       var trackIndex = playlist.tracks.length;
       // Pull these out into <script type="text/template"> elements on the HTML page, render using
       // underscore.js' templating library
-      var trackElement = $('<li class="track_line" id="track_'+trackIndex+'", data-trackIndex="'+trackIndex+'"><div class="track"></div></li>');
+      var trackElement = $('<li class="track_line" id="track_'+trackIndex+'", data-trackindex="'+trackIndex+'"><div class="track"></div></li>');
       // trackElement.hide();
-      // Pull 'tony_montatna.wav' out to a variable as an attribute on the UserInterface object
-      playlist.addTrack('tony_montana.wav', trackElement);
-
+      playlist.addTrack(track);
       $('#track_list').append(trackElement);
-      // Only call draggable on the new track elements
       trackElement.find('.track').draggable({ axis: "x" });
     }
 
-    $('#track_list').on('mouseup', '.track', updateStartTime);
+    $('#track_list').on('mouseup', '.track', updateDelay);
 
     function setSelectedTrack(e) {
-      var index = $(e.target.parentElement).data('trackIndex');
+      var index = $(e.target.parentElement).data('trackindex');
       selectedTrack = playlist.tracks[index];
     }
 
-    // make more descriptive
-    function updateStartTime(e) {
+    function updateDelay(e) {
       setSelectedTrack(e);
       var left = parseInt($(this).css("left"), 10);
-      var startTime = secondize(left);
-      selectedTrack.updateStartTime(startTime);
-
-      // Would be good have the track fire an 'changed' event and have the view pickup on the event
-      // which would then call track.render();
-      selectedTrack.render();
+      var delay = secondize(left);
+      selectedTrack.setDelay(delay);
     }
 
     $(document).on("keyup", keyUpEvent);
     $(document).on("keydown", keyDownEvent);
 
     function keyDownEvent(e) {
-      switch (e) {
-        case (e.which == SKEY):
-        createSoundSelection();
-        break;
+      switch (e.which) {
+        case (SKEY):
+          createSoundSelection();
+          break;
       }
     }
 
     function keyUpEvent(e) {
-      switch (e) {
-        case (e.which == CKEY):
-        cropSelection();
+      switch (e.which) {
+        case (CKEY):
+          cropSelection();
         break;
       }
     }
@@ -86,7 +75,6 @@ $(document).ready(function() {
       enableDragging();
     }
 
-    // change this method's name
     function startSoundSelection(e) {
       setSelectedTrack(e);
       var parentOffset = $(this).offset();
@@ -105,16 +93,11 @@ $(document).ready(function() {
       });
     }
 
-  //   function cropSelection() {
-  //     // this will go away when selectedTrack is a track, not an index
-  //     var selection = Math.abs(selectEnd - selectStart);
-  //     var offset = secondize(Math.min(selectStart, selectEnd));
-  //     var startTime += secondize(Math.min(selectStart, selectEnd));
-  //     var playTime = secondize(selection);
-
-  //     selectedTrack.cropPlayback( offset, startTime, playTime);
-  //     // this also can be removed after you start firing events for track changes
-  //     selectedTrack.render();
-  //   }
+    function cropSelection() {
+      selectedTrack.setOffset(secondize(Math.min(selectStart, selectEnd)));
+      selectedTrack.setDelay(secondize(Math.min(selectStart, selectEnd)));
+      selectedTrack.setDuration(secondize(Math.abs(selectEnd - selectStart)));
+    }
   }
+  UserInterface();
 });
