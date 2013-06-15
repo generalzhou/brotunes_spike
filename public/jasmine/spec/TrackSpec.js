@@ -2,46 +2,43 @@ describe("A Track", function(){
   
   var bufferLoader;
   var track; 
-  var song;
   var context;
 
   beforeEach(function(){
-    song = new Track({url : "/james_bond.wav", context : new webkitAudioContext});
-    // track = jasmine.createSpyObj('Track', ['url', 'context', 'speakers', 'delay', 'offest', 'duration', 'trackLength', 'buffer', 'setUpBuffer', 'connectNodes', 'play', 'bufferLoaded', 'setDelay', 'setOffset', 'setDuration']);
-    // bufferLoader = jasmine.createSpyObj('BufferLoader', ['load']);
+    track = new Track({url : "/james_bond.wav", context : new webkitAudioContext});
     spyOn(BufferLoader, 'load').andReturn(123);
   });
 
   it("should have a url", function(){
-    expect(song.url).toEqual("/james_bond.wav");
+    expect(track.url).toEqual("/james_bond.wav");
   });
 
   it("should have an audio context", function(){
-    expect(song.context).toBeDefined();
+    expect(track.context).toBeDefined();
   });
 
   it("should have an audio destination", function(){
-    expect(song.speakers).toEqual(song.context.destination); 
+    expect(track.speakers).toEqual(track.context.destination); 
   });
 
   it("should have a trackLength", function(){
-    expect(song.trackLength).toBeDefined();
+    expect(track.trackLength).toBeDefined();
   });
 
   it("should have an audio buffer to play", function(){
-    expect(song.buffer).toBeDefined();
+    expect(track.buffer).toBeDefined();
   });
 
   it("should have a duration", function(){
-    expect(song.duration).toBeDefined();
+    expect(track.duration).toBeDefined();
   });
 
   it("should have a 'delay' playback property that defaults to 0", function(){
-    expect(song.delay).toEqual(0);
+    expect(track.delay).toEqual(0);
   });
 
   it("should have an offset playback property that defaults to 0", function(){
-    expect(song.offset).toEqual(0);
+    expect(track.offset).toEqual(0);
   });
 
 });
