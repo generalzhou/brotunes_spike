@@ -9,7 +9,7 @@ function TrackList(context, savedJSON){
   };
 
   this.toJSONString = function(){
-    var state = {longestDuration:this.longestDuration,tracks:[]};
+    var state = {tracks:[]};
     for (i in this.tracks){
       state['tracks'].push(this.tracks[i].toJSON());
     }
@@ -36,6 +36,14 @@ function TrackList(context, savedJSON){
       this.tracks[i].pause(time);
     }
   };
+
+  this.stopAll = function(){
+    for (i in this.tracks) {
+      this.tracks[i].stop();
+    }
+  };
+
+
 
   this.resumeAll = function(){
     for (i in this.tracks) {
