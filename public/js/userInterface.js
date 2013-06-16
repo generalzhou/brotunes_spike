@@ -1,13 +1,13 @@
-var playlist = new TrackList();
-
 function pixelize(seconds){
-  return seconds / playlist.longestDuration * 700;
+  return Math.floor(seconds / playlist.longestDuration * 600)
 }
 
 function secondize(pixels){
-  return pixels / 700 * playlist.longestDuration;
+  return pixels / 600 * playlist.longestDuration
 }
+var playlist = new TrackList();
 $(document).ready(function() {
+
 
   function UserInterface() {
     var CKEY = 67;
@@ -16,12 +16,29 @@ $(document).ready(function() {
     var selectEnd;
     var context = new webkitAudioContext();
     var selectedTrack;
+    setupTemplate();
 
     $(document).on("keyup", keyUpEvent);
     $(document).on("keydown", keyDownEvent);
-    $('#track_list').on('mouseup', '.track', updateDelay);
+    $('#track_list').on('mouseup', '.audio_clip', updateDelay);
+    $('#track_list').click(clickRouter)
     $('#add_track').click( addTrack );
     $('#play_all').click( playAll );
+    $('#stop_all').click( stopAll );
+
+    function clickRouter(e){
+      switch ($(e.target).attr('class')){
+        case ('pause_track'):
+          pauseTrack($(e.target));
+          break;
+        case ('resume_track'):
+          resumeTrack($(e.target));
+          break;
+        case ('stop_track'):
+          stopTrack($(e.target));
+          break;
+      }
+    }
 
     function keyDownEvent(e) {
       switch (e.which) {
@@ -50,8 +67,38 @@ $(document).ready(function() {
       playlist.playAllAt(0);
     }
 
+    function stopAll() {
+      playlist.stopAll(0);
+    }
+
+
+    function pauseTrack(target) {
+      target.html('>');
+      target.removeClass();
+      target.addClass('resume_track');
+      var id = target.parent().parent().data('index');
+      playlist.tracks[id].pause();
+    }
+
+    function resumeTrack(target) {
+      target.html('||');
+      target.removeClass();
+      target.addClass('pause_track');
+      var id = target.parent().parent().data('index');
+      playlist.tracks[id].resume();
+    }
+
+    function stopTrack(target) {
+      var playPauseButton = target.parent().children('.pause_track')
+      playPauseButton.html('>');
+      playPauseButton.removeClass();
+      playPauseButton.addClass('resume_track');
+      var id = target.parent().parent().data('index');
+      playlist.tracks[id].stop();
+    }
+
     function setSelectedTrack(e) {
-      var index = $(e.target.parentElement).data('index');
+      var index = $(e.target.parentElement.parentElement).data('index');
       selectedTrack = playlist.tracks[index];
     }
 
@@ -64,8 +111,8 @@ $(document).ready(function() {
 
 
     function createSoundSelection() {
-      $('.track').draggable('disable');
-      $('#track_list').on("mousedown", ".track", startSoundSelection);
+      $('.audio_clip').draggable('disable');
+      $('#track_list').on("mousedown", '.audio_clip', startSoundSelection);
       enableDragging();
     }
 
@@ -83,18 +130,27 @@ $(document).ready(function() {
 
     function enableDragging() {
       $(document).on("keyup", function() {
-        $('.track').draggable('enable');
+        $('.audio_clip').draggable('enable');
       });
     }
 
     function cropSelection() {
-      console.log('current offset = ' + selectedTrack.offset + ' , current delay = ' + selectedTrack.delay)
+      console.log('current offset = ' + selectedTrack.offset + ' , current delay = ' + selectedTrack.delay);
       selectedTrack.setOffset(selectedTrack.offset + secondize(Math.min(selectStart, selectEnd)));
       selectedTrack.setDelay(selectedTrack.delay + secondize(Math.min(selectStart, selectEnd)));
-      console.log('new offset = ' + selectedTrack.offset + ' , new delay = ' + selectedTrack.delay)
+      console.log('new offset = ' + selectedTrack.offset + ' , new delay = ' + selectedTrack.delay);
 
       selectedTrack.setDuration(secondize(Math.abs(selectEnd - selectStart)));
     }
+
+    function setupTemplate(){
+      _.templateSettings = {
+        interpolate: /\{\{\=(.+?)\}\}/g,
+        evaluate: /\{\{(.+?)\}\}/g,
+        variable: "rc"
+      };
+    }
+
   }
   UserInterface();
 });
