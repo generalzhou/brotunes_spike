@@ -24,6 +24,7 @@ $(document).ready(function() {
     $('#track_list').click(clickRouter)
     $('#add_track').click( addTrack );
     $('#play_all').click( playAll );
+    $('#stop_all').click( stopAll );
 
     function clickRouter(e){
       switch ($(e.target).attr('class')){
@@ -65,6 +66,11 @@ $(document).ready(function() {
     function playAll() {
       playlist.playAllAt(0);
     }
+
+    function stopAll() {
+      playlist.stopAll(0);
+    }
+
 
     function pauseTrack(target) {
       target.html('>');

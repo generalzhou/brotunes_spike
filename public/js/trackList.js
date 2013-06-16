@@ -37,6 +37,14 @@ function TrackList(context, savedJSON){
     }
   };
 
+  this.stopAll = function(){
+    for (i in this.tracks) {
+      this.tracks[i].stop();
+    }
+  };
+
+
+
   this.resumeAll = function(){
     for (i in this.tracks) {
       this.tracks[i].resume(time);

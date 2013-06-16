@@ -1,6 +1,11 @@
 body{
   font-family:Helvetica Neue;
 }
+
+a {
+  text-decoration: none;
+}
+
 #container {
   width: 1000px;
   margin: 0px auto;
@@ -13,6 +18,24 @@ body{
   width: 900px;
   height: 60px;
   list-style: none;
+}
+
+
+#strobe {
+  color:#F61595;
+  font-size: 60px;
+  font-weight:10px;
+  margin-right:50px;
+}
+
+.control_panel a {
+  font-size: 50px;
+  color:#39FF14;
+  font-weight:900;
+}
+
+#stop_all {
+  font-size: 35px;
 }
 
 .progress_bar {
@@ -62,3 +85,7 @@ body{
   left: relative;
 }
 
+.control_panel {
+  width:1000px;
+  height:160px;
+}
