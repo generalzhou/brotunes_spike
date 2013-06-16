@@ -2,8 +2,8 @@ body{
   font-family:Helvetica Neue;
 }
 #container {
-  width: 700px;
-  margin: 20px auto;
+  width: 1000px;
+  margin: 0px auto;
 }
 
 .track_row {
@@ -15,10 +15,19 @@ body{
   list-style: none;
 }
 
+.progress_bar {
+  border: 1px solid red;
+  width: 0px;
+  height: 60px;
+  position:absolute;
+  left:0;
+}
+
 .track_row div {
   height: 60px;
   float:left;
 }
+
 .track_line {
   border-left: 1px solid #2E507F;
   border-right: 1px solid #2E507F;
@@ -27,6 +36,8 @@ body{
   width: 600px;
   overflow: hidden;
   background-color: #A9CCFF;
+  position:relative;
+
 }
 
 .track_controls {

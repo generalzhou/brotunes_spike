@@ -32,6 +32,7 @@ function Track(options) {
     this.source = this.setUpBuffer();
     this.connectNodes(this.source);
     this.source.start(this.context.currentTime + delay, offset, duration);
+    $.Topic("Track:play").publish(this);
   };
 
   this.playAt = function(startingTime){
@@ -53,15 +54,19 @@ function Track(options) {
     this.pauseTime = this.context.currentTime;
     console.log('pauseTime = ' + this.pauseTime);
     this.source.stop(0);
+    $.Topic("Track:pause").publish(this);
   };
 
   this.stop = function() {
     this.pauseTime = this.startTime;
     this.source.stop(0);
+    $.Topic("Track:pause").publish(this);
   };
 
   this.resume = function(){
-    this.playAt(Math.max((this.pauseTime - this.startTime),0));
+    var startTime = Math.max((this.pauseTime - this.startTime),0);
+    this.playAt(startTime);
+
   };
 
   this.bufferLoaded = function(buffer) {
